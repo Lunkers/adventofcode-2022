@@ -11,7 +11,8 @@ Otherwise, if the head and tail aren't touching and aren't in the same row or co
 import math
 
 start: tuple = (0, 0)
-part1Rope: list[tuple] = [start, start]
+currentHead = start
+currentTail = start
 part2Rope: list[tuple] = [start] * 10
 
 
@@ -42,19 +43,27 @@ def moveTail(distance: tuple, tail: tuple) -> tuple:
         return tail
 
 
-visited = [start]
+visited1 = [start]
+visited2 = [start]
 with open('input.txt') as f:
     while (line := f.readline().rstrip()):
         direction, amount = line.split(" ")
         for i in range(int(amount)):
             part2Rope[0] = move(direction, 1, part2Rope[0])
-            # move tail
+            currentHead = move(direction, 1, currentHead)
+            # move tail part 1
+            distancePart1 = (currentHead[0] - currentTail[0],
+                             currentHead[1] - currentTail[1])
+            currentTail = moveTail(distancePart1, currentTail)
+            visited1.append(currentTail)
+            # move tail part 2
             for i in range(1, len(part2Rope)):
                 distance = (part2Rope[i-1][0] - part2Rope[i][0],
                             part2Rope[i-1][1] - part2Rope[i][1])
                 part2Rope[i] = moveTail(distance, part2Rope[i])
                 if i == len(part2Rope) - 1:
-                    visited.append(part2Rope[i])
+                    visited2.append(part2Rope[i])
 
 
-print(len(set(visited)))
+print(f"part 1: {len(set(visited1))}")
+print(f"part 2: {len(set(visited2))}")
